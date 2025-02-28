@@ -1,1 +1,1 @@
-# sonos to mqtt
+# Integracja NODE-RED + SONOS + AWTRIX (https://pixelclock.pl)
