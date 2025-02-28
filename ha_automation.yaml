@@ -1,0 +1,6 @@
+action: mqtt.publish
+metadata: {}
+data:
+  evaluate_payload: false
+  topic: sonos.audio_format
+  payload: "{{ states('sensor.sonos_audio_input_format') }}"
