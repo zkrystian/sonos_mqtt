@@ -1,0 +1,301 @@
+[
+    {
+        "id": "c36d1e4c14d8fe5d",
+        "type": "function",
+        "z": "15f83457d3239577",
+        "name": "mute: on / off",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c5f75d89a84e144c",
+        "type": "function",
+        "z": "15f83457d3239577",
+        "name": "volume",
+        "func": "// Przechowywanie poprzedniej wartości jako kontekst\nvar previousValue = context.get('previousValue') || null;\n\n// Bieżąca wartość\nvar currentValue = parseInt(msg.payload, 10);\n\n// Jeśli nie było poprzedniej wartości, ustawiamy ją\nif (previousValue === null) {\n    context.set('previousValue', currentValue);\n    return null; // Nie wykonujemy żadnych operacji\n}\n\n// Przygotowanie odpowiedniego msg.payload w zależności od zmiany\nif (currentValue > previousValue) {\n    msg.payload = { \"text\": currentValue.toString(), \"icon\": \"56218\", \"stack\": false };\n} else if (currentValue < previousValue) {\n    msg.payload = { \"text\": currentValue.toString(), \"icon\": \"56219\", \"stack\": false }; // inny ID ikony\n} else {\n    return null; // Brak zmiany, nie wysyłamy nic\n}\n\n// Aktualizacja poprzedniej wartości\ncontext.set('previousValue', currentValue);\n\n// Zwrócenie wyniku\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 500,
+        "wires": [
+            [
+                "81dafc197ee62d71"
+            ]
+        ]
+    },
+    {
+        "id": "81dafc197ee62d71",
+        "type": "mqtt out",
+        "z": "15f83457d3239577",
+        "name": "sonos volume",
+        "topic": "awtrix_2fbd58/notify",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "346df2a95aac5785",
+        "x": 840,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "f54e9bf766fb65fc",
+        "type": "mqtt out",
+        "z": "15f83457d3239577",
+        "name": "sonos mute",
+        "topic": "awtrix_2fbd58/notify",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "346df2a95aac5785",
+        "x": 830,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "46c0de3f5bc9596c",
+        "type": "mqtt in",
+        "z": "15f83457d3239577",
+        "name": "audio format",
+        "topic": "sonos.audio_format",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "346df2a95aac5785",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 640,
+        "wires": [
+            [
+                "19c08adb966fc12f"
+            ]
+        ]
+    },
+    {
+        "id": "19c08adb966fc12f",
+        "type": "switch",
+        "z": "15f83457d3239577",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Dolby Digital Plus 5.1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "PCM 2.0",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "No input",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Dolby 5.1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "No input connected",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Dolby 2.0",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 6,
+        "x": 410,
+        "y": 640,
+        "wires": [
+            [
+                "e880ae6439845d93"
+            ],
+            [
+                "e880ae6439845d93"
+            ],
+            [],
+            [
+                "e880ae6439845d93"
+            ],
+            [],
+            [
+                "e880ae6439845d93"
+            ]
+        ]
+    },
+    {
+        "id": "e880ae6439845d93",
+        "type": "function",
+        "z": "15f83457d3239577",
+        "name": "Audio",
+        "func": "var audio = msg.payload;\n\nmsg.payload = {\n    \"icon\": 52638,\n    \"text\": audio + \"\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 620,
+        "wires": [
+            [
+                "3e53fa09bccf2c58"
+            ]
+        ]
+    },
+    {
+        "id": "3e53fa09bccf2c58",
+        "type": "mqtt out",
+        "z": "15f83457d3239577",
+        "name": "audio format",
+        "topic": "awtrix_2fbd58/custom/audio_format",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "346df2a95aac5785",
+        "x": 990,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "fa17d259a8cd1367",
+        "type": "mqtt out",
+        "z": "15f83457d3239577",
+        "name": "notify",
+        "topic": "awtrix_2fbd58/notify",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "346df2a95aac5785",
+        "x": 730,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "0e7880e7e10ceff1",
+        "type": "function",
+        "z": "15f83457d3239577",
+        "name": "audio",
+        "func": "var audio = msg.payload;\n\nmsg.payload = {\n    \"icon\": 52638,\n    \"text\": audio + \"\"\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 840,
+        "wires": [
+            [
+                "fa17d259a8cd1367"
+            ]
+        ]
+    },
+    {
+        "id": "4418f48113fdf669",
+        "type": "sonosevents-selection",
+        "z": "15f83457d3239577",
+        "name": "sonos",
+        "confignode": "f5842b4a2f5fc10a",
+        "playerHostname": "192.168.88.129",
+        "events": [
+            {
+                "fullName": "RenderingControlService.mutestate"
+            },
+            {
+                "fullName": "RenderingControlService.volume"
+            },
+            {
+                "fullName": "AVTransportService.content"
+            }
+        ],
+        "outputs": 3,
+        "x": 190,
+        "y": 460,
+        "wires": [
+            [
+                "c36d1e4c14d8fe5d"
+            ],
+            [
+                "c5f75d89a84e144c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "346df2a95aac5785",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.88.155",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "f5842b4a2f5fc10a",
+        "type": "sonosevents-config",
+        "name": "dom",
+        "listenerHostname": "192.168.88.121",
+        "listenerPort": "",
+        "portType": "num"
+    }
+]
